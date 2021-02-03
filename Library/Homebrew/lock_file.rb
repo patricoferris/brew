@@ -18,13 +18,13 @@ class LockFile
   def lock
     @path.parent.mkpath
     create_lockfile
-    return if @lockfile.flock(File::LOCK_EX | File::LOCK_NB)
+    return if @lockfile.flock(File::LOCK_EX | File::LOCK_NB) || ENV["HOMEBREW_DISABLE_LOCKING"]
 
     raise OperationInProgressError, @name
   end
 
   def unlock
-    return if @lockfile.nil? || @lockfile.closed?
+    return if @lockfile.nil? || @lockfile.closed? || ENV["HOMEBREW_DISABLE_LOCKING"]
 
     @lockfile.flock(File::LOCK_UN)
     @lockfile.close

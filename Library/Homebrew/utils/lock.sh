@@ -42,7 +42,10 @@ _create_lock() {
   [[ -x "$ruby" ]] || ruby="$(type -P ruby)"
   [[ -x "$python" ]] || python="$(type -P python)"
 
-  if [[ -x "$ruby" ]] && "$ruby" -e "exit(RUBY_VERSION >= '1.8.7')"
+  if [ -n "$HOMEBREW_DISABLE_LOCKING" ]
+  then
+    onoe "Locking disabled, proceed with caution."
+  elif [[ -x "$ruby" ]] && "$ruby" -e "exit(RUBY_VERSION >= '1.8.7')"
   then
     "$ruby" -e "File.new($lock_fd).flock(File::LOCK_EX | File::LOCK_NB) || exit(1)"
   elif [[ -x "$python" ]]
